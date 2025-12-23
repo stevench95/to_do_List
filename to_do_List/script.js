@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <input type="checkbox" class="task-checkbox" ${
           completed ? "checked" : ""
         }>
-        <button class="edit-task-button">Edit</button>
-        <button class="delete-task-button">Delete</button>
+        <button class="edit-task-button"><i class="fa-regular fa-pen-to-square"></i></button>
+        <button class="delete-task-button"><i class="fa-solid fa-delete-left"></i></button>
     `;
     taskList.insertBefore(li, taskList.firstChild);
     bindTaskEvents(li);
@@ -126,6 +126,33 @@ document.addEventListener("DOMContentLoaded", () => {
   taskInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
       createTaskItem(event);
+      
     }
   });
 });
+
+
+
+const liveTimeWithMillisecond = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+  
+
+   
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    const formatted_hours = hours.toString().padStart(2, '0');
+    const formatted_time = `${year}-${month}-${day} ${formatted_hours}:${minutes}:${seconds} ${ampm}`;
+
+   
+
+    document.getElementById('clock').textContent = formatted_time;
+};
+
+setInterval(liveTimeWithMillisecond, 10);
