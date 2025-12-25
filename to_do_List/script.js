@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const taskList = document.getElementById("task-list");
   const progressFill = document.querySelector(".progress");
   const taskNumber = document.getElementById("task-number");
+  const prioritySelect = document.getElementById("priority-select");
 
   const updateProgress = () => {
     const total = taskList.children.length;
@@ -21,6 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const sortTasks = () => {
+    const tasks = Array.from(taskList.children);
+    const taskCompleted = tasks.filter(
+      (li) => li.querySelector(".task-checkbox").checked
+    );
+    const taskIncomplete = tasks.filter(
+      (li) => !li.querySelector(".task-checkbox").checked
+    );
+
+    taskIncomplete.sort((a, b) => {
+      const PrioretyA = a.dataset.priority || "low";
+      const PrioretyB = b.dataset.priority || "low";
+      const priorityOrder = { high: 0, mid: 1, low: 2 };
+      return priorityOrder[PrioretyA] - priorityOrder[PrioretyB];
+    });
+
+    taskList.innerHTML = "";
+    [...taskIncomplete, ...taskCompleted].forEach((li) =>
+      taskList.appendChild(li)
+    );
+  };
+
   const bindTaskEvents = (li) => {
     const checkbox = li.querySelector(".task-checkbox");
     const editButton = li.querySelector(".edit-task-button");
@@ -34,23 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
         editButton.style.opacity = "0.5";
         editButton.style.cursor = "not-allowed";
         editButton.style.pointerEvents = "none";
-        taskList.appendChild(li);
       } else {
         li.classList.remove("completed");
         editButton.disabled = false;
         editButton.style.opacity = "1";
         editButton.style.cursor = "pointer";
         editButton.style.pointerEvents = "auto";
-        taskList.insertBefore(li, taskList.firstChild);
       }
+      sortTasks();
       updateProgress();
       saveTaskToLocalStorage();
     });
 
     editButton.addEventListener("click", () => {
       if (checkbox.checked) return;
-      const newText = prompt("Edit your task:");
-      if (newText !== null) {
+      const newText = prompt("Edit your task:", taskSpan.textContent);
+      if (newText !== null && newText.trim() !== "") {
         taskSpan.textContent = newText.trim();
         saveTaskToLocalStorage();
       }
@@ -73,18 +95,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /////
 
-  const createTaskElement = (text, completed = false) => {
+  const createTaskElement = (text, priority = "low", completed = false) => {
     const li = document.createElement("li");
+    li.dataset.priority = priority;
+
+    const priorityText =
+      priority === "high" ? "High" : priority === "low" ? "Low" : "Mid";
+    const priorityClass = `priority-${priority}`;
+
     li.innerHTML = `
-        <span class="task-text">${text}</span>
-        <input type="checkbox" class="task-checkbox" ${
-          completed ? "checked" : ""
-        }>
-        <button class="edit-task-button"><i class="fa-regular fa-pen-to-square"></i></button>
-        <button class="delete-task-button"><i class="fa-solid fa-delete-left"></i></button>
+    <div class="priority-tag ${priorityClass}">${priorityText}</div>
+            <input type="checkbox" class="task-checkbox" ${
+              completed ? "checked" : ""
+            }>
+      <span class="task-text">${text}</span>
+      <button class="edit-task-button"><i class="fa-regular fa-pen-to-square"></i></button>
+      <button class="delete-task-button"><i class="fa-solid fa-delete-left"></i></button>
     `;
-    taskList.insertBefore(li, taskList.firstChild);
+    taskList.appendChild(li);
     bindTaskEvents(li);
+    sortTasks();
     return li;
   };
 
@@ -92,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const tasks = Array.from(taskList.querySelectorAll("li")).map((li) => {
       return {
         text: li.querySelector(".task-text").textContent.trim(),
+        priority: li.dataset.priority || "low",
         completed: li.querySelector(".task-checkbox").checked,
       };
     });
@@ -101,9 +132,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadTasksFromLocalStorage = () => {
     const save = localStorage.getItem("tasks");
     if (!save) return;
-    JSON.parse(save).forEach((task) =>
-      createTaskElement(task.text, task.completed)
-    );
+    JSON.parse(save).forEach((task) => {
+      createTaskElement(task.text, task.priority || "low", task.completed);
+    });
     updateProgress();
   };
 
@@ -112,7 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskText = taskInput.value.trim();
     if (!taskText) return;
 
-    createTaskElement(taskText);
+    const priority = prioritySelect.value;
+    createTaskElement(taskText, priority);
 
     taskInput.value = "";
     updateProgress();
@@ -126,33 +158,26 @@ document.addEventListener("DOMContentLoaded", () => {
   taskInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
       createTaskItem(event);
-      
     }
   });
 });
 
-
-
 const liveTimeWithMillisecond = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-  
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const day = now.getDate().toString().padStart(2, "0");
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
 
-   
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; 
-    const formatted_hours = hours.toString().padStart(2, '0');
-    const formatted_time = `${year}-${month}-${day} ${formatted_hours}:${minutes}:${seconds} ${ampm}`;
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const formatted_hours = hours.toString().padStart(2, "0");
+  const formatted_time = `${year}-${month}-${day} ${formatted_hours}:${minutes}:${seconds} ${ampm}`;
 
-   
-
-    document.getElementById('clock').textContent = formatted_time;
+  document.getElementById("clock").textContent = formatted_time;
 };
 
-setInterval(liveTimeWithMillisecond, 10);
+setInterval(liveTimeWithMillisecond, 1000);

@@ -131,9 +131,57 @@ body {
   opacity: 0.3;
 }
 
+#priority-select {
+  padding: 0.8rem 1rem;
+  margin-left: 1rem;
+  margin-right: 0;
+  border: none;
+  outline: none;
+  background: var(--task-input-bg);
+  color: var(--text-color);
+  border-radius: 3rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#priority-select option {
+  background: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.priority-tag {
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.8rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-right: 0.8rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+.priority-high {
+  background: #d32f2f;
+  color: var(--text-color);
+}
+
+.priority-mid {
+  background: #f9a825;
+  color: var(--text-color);
+}
+
+.priority-low {
+  background: #388e3c;
+  color: var(--text-color);
+}
+
+
+.completed .priority-tag {
+  opacity: 0.6;
+}
+
 .input-task-area button {
   padding: 0.8rem 1.2rem;
-  margin-left: 1rem;
+  margin-left: 0.3rem;
   border: none;
   outline: none;
   background-color: var(--task-input-bg);
@@ -237,3 +285,10 @@ body {
 #task-list li .edit-task-button:hover {
   transform: scale(1.1);
 }
+
+
+#task-list li.completed .task-deadline {
+  opacity: 0.5;
+}
+
+

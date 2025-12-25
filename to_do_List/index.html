@@ -22,8 +22,8 @@
 <body onload="startTime()">
 
     <div class="container">
-     
-        
+
+
 
         <div class="todo_area">
             <div id="clock"></div>
@@ -41,6 +41,14 @@
             </div>
             <form action="" class="input-task-area">
                 <input type="text" id="task-input" placeholder="New task">
+
+                <select id="priority-select">
+                    <option value="low"selected>Low</option>
+                    <option value="mid" >Mid</option>
+                    <option value="high">High</option>
+                    
+                </select>
+
                 <button type="submit" id="add-task-button"><i class="fa-solid fa-plus"></i></button>
 
             </form>
