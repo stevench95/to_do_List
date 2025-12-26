@@ -23,7 +23,18 @@
 
     <div class="container">
 
+        <div class="backgroundImage">
 
+            
+            <button id="reset-bg" class="upload-Btn" style="margin-left: 10px;">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+
+            <label for="bg-upload" class="upload-Btn">
+                <i class="fa-solid fa-image"></i>Change Background
+            </label>
+            <input type="file" id="bg-upload" accept="image/*" style="display: none;">
+        </div>
 
         <div class="todo_area">
             <div id="clock"></div>
@@ -43,10 +54,10 @@
                 <input type="text" id="task-input" placeholder="New task">
 
                 <select id="priority-select">
-                    <option value="low"selected>Low</option>
-                    <option value="mid" >Mid</option>
+                    <option value="low" selected>Low</option>
+                    <option value="mid">Mid</option>
                     <option value="high">High</option>
-                    
+
                 </select>
 
                 <button type="submit" id="add-task-button"><i class="fa-solid fa-plus"></i></button>

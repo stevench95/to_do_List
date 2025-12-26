@@ -54,6 +54,43 @@ body {
   border-radius: 10px;
 }
 
+.backgroundImage {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.upload-Btn {
+  background-color: var(--task-input-bg);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: none;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.upload-Btn:hover {
+  background-color: var(--task-input-bg-hover);
+  transform: scale(1.1);
+}
+
+body.custom-background {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+
+
+
+
+
+
+
 .todo_area {
   width: 100%;
   max-width: 500px;

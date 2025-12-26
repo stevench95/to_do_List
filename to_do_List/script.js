@@ -181,3 +181,33 @@ const liveTimeWithMillisecond = () => {
 };
 
 setInterval(liveTimeWithMillisecond, 1000);
+
+document.getElementById("bg-upload").onchange = function (event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (event) {
+  const base64Url = event.target.result;
+    document.body.style.backgroundImage = `url(${base64Url})`;
+    document.body.classList.add("custom-background");
+
+    localStorage.setItem("customBackground", base64Url);
+  
+  }
+  reader.readAsDataURL(file);
+};
+
+
+window.addEventListener("load", () => {
+  const savedBackground = localStorage.getItem("customBackground");
+  if (savedBackground) {
+    document.body.style.backgroundImage = `url(${savedBackground})`;
+    document.body.classList.add("custom-background");
+  }
+});
+
+document.getElementById("reset-bg").addEventListener("click", () => {
+  document.body.style.backgroundImage = "";
+  document.body.classList.remove("custom-background");
+  localStorage.removeItem("customBackground");
+});
