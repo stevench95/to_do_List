@@ -160,6 +160,71 @@ document.addEventListener("DOMContentLoaded", () => {
       createTaskItem(event);
     }
   });
+
+  document.getElementById("export-csv").addEventListener("click", () => {
+    const tasks = Array.from(taskList.querySelectorAll("li")).map((li) => ({
+      text: li.querySelector(".task-text").textContent.trim(),
+      priority: li.dataset.priority || "low",
+      completed: li.querySelector(".task-checkbox").checked,
+    }));
+
+    let csvcontent = "Text,Priority,Completed\n";
+
+    tasks.forEach((task) => {
+      const text = `"${task.text.replace(/"/g, '""')}"`;
+      const priority = task.priority;
+      const completed = task.completed ? "true" : "false";
+      csvcontent += `${text},${priority},${completed}\n`;
+    });
+
+    const blob = new Blob([csvcontent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "tasks.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+
+document.getElementById("import-csv-input").onchange = function (event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const csvText = event.target.result;
+    const lines = csvText.split("\n").filter((line) => line.trim());
+
+    taskList.innerHTML = "";
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      const parts = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
+      if (!parts || parts.length < 3) continue;
+
+      let textQuoted = parts[0].trim();
+      const priority = parts[1].trim().toLowerCase();
+      const completedStr = parts[2].trim().toLowerCase();
+
+      const text = textQuoted.replace(/^"(.*)"$/, "$1").replace(/""/g, '"');
+      const isCompleted =
+        completedStr.toLowerCase() === "yes" ||
+        completedStr.toLowerCase() === "true";
+
+      createTaskElement(text, priority || "low", isCompleted);
+    }
+    updateProgress();
+    saveTaskToLocalStorage();
+    sortTasks();
+  };
+  reader.readAsText(file);
+};
+
+  
 });
 
 const liveTimeWithMillisecond = () => {
@@ -187,16 +252,14 @@ document.getElementById("bg-upload").onchange = function (event) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function (event) {
-  const base64Url = event.target.result;
+    const base64Url = event.target.result;
     document.body.style.backgroundImage = `url(${base64Url})`;
     document.body.classList.add("custom-background");
 
     localStorage.setItem("customBackground", base64Url);
-  
-  }
+  };
   reader.readAsDataURL(file);
 };
-
 
 window.addEventListener("load", () => {
   const savedBackground = localStorage.getItem("customBackground");
@@ -211,3 +274,4 @@ document.getElementById("reset-bg").addEventListener("click", () => {
   document.body.classList.remove("custom-background");
   localStorage.removeItem("customBackground");
 });
+
